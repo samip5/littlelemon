@@ -25,6 +25,7 @@ extension Dish {
                 dish.title = item.title
                 dish.image = item.image
                 dish.price = item.price
+                dish.category = item.category
                 dish.descriptionText = item.description
             }
         }
