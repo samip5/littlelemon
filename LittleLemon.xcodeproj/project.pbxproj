@@ -6,7 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		33688ED92F98C44600EB5328 /* ExampleDatabase.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 33688ED72F98C44600EB5328 /* ExampleDatabase.xcdatamodeld */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
+		33688ED82F98C44600EB5328 /* ExampleDatabase.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ExampleDatabase.xcdatamodel; sourceTree = "<group>"; };
 		33B1CA142F981E4F0086E895 /* LittleLemon.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LittleLemon.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -32,6 +37,7 @@
 		33B1CA0B2F981E4F0086E895 = {
 			isa = PBXGroup;
 			children = (
+				33688ED72F98C44600EB5328 /* ExampleDatabase.xcdatamodeld */,
 				33B1CA162F981E4F0086E895 /* LittleLemon */,
 				33B1CA152F981E4F0086E895 /* Products */,
 			);
@@ -119,6 +125,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				33688ED92F98C44600EB5328 /* ExampleDatabase.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -332,6 +339,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		33688ED72F98C44600EB5328 /* ExampleDatabase.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				33688ED82F98C44600EB5328 /* ExampleDatabase.xcdatamodel */,
+			);
+			currentVersion = 33688ED82F98C44600EB5328 /* ExampleDatabase.xcdatamodel */;
+			path = ExampleDatabase.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 33B1CA0C2F981E4F0086E895 /* Project object */;
 }
