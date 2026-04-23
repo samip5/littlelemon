@@ -22,14 +22,14 @@ struct UserProfile: View {
     init(onLogout: @escaping () -> Void = {}) {
         self.onLogout = onLogout
         let d = UserDefaults.standard
-        _firstName      = State(initialValue: d.string(forKey: userFirstNameKey) ?? "")
-        _lastName       = State(initialValue: d.string(forKey: userLastNameKey) ?? "")
-        _email          = State(initialValue: d.string(forKey: userEmailKey) ?? "")
-        _phoneNumber    = State(initialValue: d.string(forKey: userPhoneKey) ?? "")
-        _orderStatuses  = State(initialValue: d.object(forKey: userOrderStatusNotifKey) as? Bool ?? true)
+        _firstName = State(initialValue: d.string(forKey: userFirstNameKey) ?? "")
+        _lastName = State(initialValue: d.string(forKey: userLastNameKey) ?? "")
+        _email = State(initialValue: d.string(forKey: userEmailKey) ?? "")
+        _phoneNumber = State(initialValue: d.string(forKey: userPhoneKey) ?? "")
+        _orderStatuses = State(initialValue: d.object(forKey: userOrderStatusNotifKey) as? Bool ?? true)
         _passwordChanges = State(initialValue: d.object(forKey: userPasswordChangesNotifKey) as? Bool ?? true)
-        _specialOffers  = State(initialValue: d.object(forKey: userSpecialOffersNotifKey) as? Bool ?? true)
-        _newsletter     = State(initialValue: d.object(forKey: userNewsletterNotifKey) as? Bool ?? true)
+        _specialOffers = State(initialValue: d.object(forKey: userSpecialOffersNotifKey) as? Bool ?? true)
+        _newsletter = State(initialValue: d.object(forKey: userNewsletterNotifKey) as? Bool ?? true)
     }
 
     @Environment(\.dismiss) private var dismiss
@@ -42,7 +42,7 @@ struct UserProfile: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            NavigationHeader(showBackButton: true, onBack: { dismiss() })
+            NavigationHeader(showBackButton: false)
             Divider()
             scrollContent
         }
@@ -53,29 +53,22 @@ struct UserProfile: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 Text("Personal information")
-                    .font(.title3)
-                    .fontWeight(.bold)
+                    .font(.karla(18, weight: .bold))
 
                 avatarSection
-
                 formSection
-
                 notificationsSection
-
                 logoutButton
-
                 bottomButtons
             }
             .padding()
         }
     }
 
-    // MARK: - Sections
-
     private var avatarSection: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Avatar")
-                .font(.caption)
+                .font(.karla(13))
                 .foregroundColor(.secondary)
 
             HStack(spacing: 16) {
@@ -88,7 +81,7 @@ struct UserProfile: View {
                         Image(systemName: "person.circle.fill")
                             .resizable()
                             .scaledToFill()
-                            .foregroundColor(Color(UIColor.systemGray3))
+                            .foregroundColor(.secondary)
                     }
                 }
                 .frame(width: 72, height: 72)
@@ -96,12 +89,11 @@ struct UserProfile: View {
 
                 PhotosPicker(selection: $selectedPhoto, matching: .images) {
                     Text("Change")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
+                        .font(.karla(16, weight: .semibold))
                         .foregroundColor(.white)
                         .padding(.horizontal, 20)
                         .padding(.vertical, 10)
-                        .background(Color(red: 0.29, green: 0.37, blue: 0.35))
+                        .background(Color.llGreen)
                         .cornerRadius(8)
                 }
                 .onChange(of: selectedPhoto) {
@@ -136,19 +128,19 @@ struct UserProfile: View {
     private func labeledField(_ label: String, text: Binding<String>) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(label)
-                .font(.caption)
+                .font(.karla(13))
                 .foregroundColor(.secondary)
             TextField(label, text: text)
+                .font(.karla(16))
                 .padding(12)
-                .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color(UIColor.systemGray4), lineWidth: 1))
+                .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.llCloud, lineWidth: 1.5))
         }
     }
 
     private var notificationsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Email notifications")
-                .font(.title3)
-                .fontWeight(.bold)
+                .font(.karla(18, weight: .bold))
 
             Toggle("Order statuses", isOn: $orderStatuses)
                 .toggleStyle(CheckboxStyle())
@@ -166,12 +158,11 @@ struct UserProfile: View {
             onLogout()
         } label: {
             Text("Log out")
-                .font(.headline)
-                .fontWeight(.bold)
-                .foregroundColor(.black)
+                .font(.karla(18, weight: .bold))
+                .foregroundColor(.llDark)
                 .frame(maxWidth: .infinity)
                 .padding()
-                .background(Color(red: 1.0, green: 0.80, blue: 0.0))
+                .background(Color.llYellow)
                 .cornerRadius(8)
         }
     }
@@ -188,44 +179,39 @@ struct UserProfile: View {
         }
     }
 
-    // MARK: - Actions
-
     private func saveChanges() {
         let d = UserDefaults.standard
-        d.set(firstName,       forKey: userFirstNameKey)
-        d.set(lastName,        forKey: userLastNameKey)
-        d.set(email,           forKey: userEmailKey)
-        d.set(phoneNumber,     forKey: userPhoneKey)
-        d.set(orderStatuses,   forKey: userOrderStatusNotifKey)
+        d.set(firstName, forKey: userFirstNameKey)
+        d.set(lastName, forKey: userLastNameKey)
+        d.set(email, forKey: userEmailKey)
+        d.set(phoneNumber, forKey: userPhoneKey)
+        d.set(orderStatuses, forKey: userOrderStatusNotifKey)
         d.set(passwordChanges, forKey: userPasswordChangesNotifKey)
-        d.set(specialOffers,   forKey: userSpecialOffersNotifKey)
-        d.set(newsletter,      forKey: userNewsletterNotifKey)
+        d.set(specialOffers, forKey: userSpecialOffersNotifKey)
+        d.set(newsletter, forKey: userNewsletterNotifKey)
     }
 
     private func discardChanges() {
         let d = UserDefaults.standard
-        firstName       = d.string(forKey: userFirstNameKey) ?? ""
-        lastName        = d.string(forKey: userLastNameKey) ?? ""
-        email           = d.string(forKey: userEmailKey) ?? ""
-        phoneNumber     = d.string(forKey: userPhoneKey) ?? ""
-        orderStatuses   = d.object(forKey: userOrderStatusNotifKey) as? Bool ?? true
+        firstName = d.string(forKey: userFirstNameKey) ?? ""
+        lastName = d.string(forKey: userLastNameKey) ?? ""
+        email = d.string(forKey: userEmailKey) ?? ""
+        phoneNumber = d.string(forKey: userPhoneKey) ?? ""
+        orderStatuses = d.object(forKey: userOrderStatusNotifKey) as? Bool ?? true
         passwordChanges = d.object(forKey: userPasswordChangesNotifKey) as? Bool ?? true
-        specialOffers   = d.object(forKey: userSpecialOffersNotifKey) as? Bool ?? true
-        newsletter      = d.object(forKey: userNewsletterNotifKey) as? Bool ?? true
+        specialOffers = d.object(forKey: userSpecialOffersNotifKey) as? Bool ?? true
+        newsletter = d.object(forKey: userNewsletterNotifKey) as? Bool ?? true
     }
 }
-
-// MARK: - Button Styles
 
 private struct FilledButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.subheadline)
-            .fontWeight(.semibold)
+            .font(.karla(16, weight: .semibold))
             .foregroundColor(.white)
             .padding(.horizontal, 20)
             .padding(.vertical, 10)
-            .background(Color(red: 0.29, green: 0.37, blue: 0.35))
+            .background(Color.llGreen)
             .cornerRadius(8)
             .opacity(configuration.isPressed ? 0.8 : 1)
     }
@@ -234,17 +220,14 @@ private struct FilledButtonStyle: ButtonStyle {
 private struct OutlinedButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.subheadline)
-            .fontWeight(.semibold)
-            .foregroundColor(.primary)
+            .font(.karla(16, weight: .semibold))
+            .foregroundColor(.llDark)
             .padding(.horizontal, 20)
             .padding(.vertical, 10)
-            .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color(UIColor.systemGray4), lineWidth: 1))
+            .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.llCloud, lineWidth: 1.5))
             .opacity(configuration.isPressed ? 0.6 : 1)
     }
 }
-
-// MARK: - Checkbox Toggle Style
 
 private struct CheckboxStyle: ToggleStyle {
     func makeBody(configuration: Configuration) -> some View {
@@ -253,11 +236,11 @@ private struct CheckboxStyle: ToggleStyle {
         } label: {
             HStack(spacing: 10) {
                 Image(systemName: configuration.isOn ? "checkmark.square.fill" : "square")
-                    .foregroundColor(configuration.isOn ? Color(red: 0.29, green: 0.37, blue: 0.35) : Color(UIColor.systemGray3))
+                    .foregroundColor(configuration.isOn ? .llGreen : .secondary)
                     .font(.title3)
                 configuration.label
                     .foregroundColor(.primary)
-                    .font(.subheadline)
+                    .font(.karla(16))
             }
         }
         .buttonStyle(.plain)

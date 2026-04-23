@@ -5,25 +5,21 @@ struct Menu: View {
     @Environment(\.managedObjectContext) private var viewContext
 
     var onLogout: () -> Void = {}
+    var onProfileTap: () -> Void = {}
 
     @State private var searchText = ""
     @State private var selectedCategory = ""
-    @State private var navigateToProfile = false
 
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                NavigationHeader(
-                    showBackButton: false,
-                    avatarAction: { navigateToProfile = true }
-                )
+                NavigationHeader(showBackButton: false, avatarAction: onProfileTap)
 
                 heroSection
 
                 VStack(alignment: .leading, spacing: 12) {
                     Text("ORDER FOR DELIVERY!")
-                        .font(.title3)
-                        .fontWeight(.bold)
+                        .font(.karla(20, weight: .black))
                         .padding(.top, 16)
 
                     categoryFilters
@@ -44,9 +40,6 @@ struct Menu: View {
                     .listStyle(.plain)
                 }
             }
-            .navigationDestination(isPresented: $navigateToProfile) {
-                UserProfile(onLogout: onLogout)
-            }
             .toolbar(.hidden, for: .navigationBar)
             .task {
                 await getMenuData()
@@ -58,29 +51,36 @@ struct Menu: View {
 
     private var heroSection: some View {
         ZStack {
-            Color(red: 0.29, green: 0.37, blue: 0.35)
+            Color.llGreen
             VStack(alignment: .leading, spacing: 8) {
-                HStack(alignment: .top, spacing: 12) {
-                    VStack(alignment: .leading, spacing: 4) {
+                HStack(alignment: .center, spacing: 12) {
+                    VStack(alignment: .leading, spacing: 2) {
                         Text("Little Lemon")
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
-                            .foregroundColor(Color(red: 1.0, green: 0.80, blue: 0.0))
+                            .font(.markaziText(64, weight: .medium))
+                            .foregroundColor(.llYellow)
+                            .fixedSize(horizontal: false, vertical: true)
                         Text("Chicago")
-                            .font(.title2)
+                            .font(.markaziText(40))
                             .foregroundColor(.white)
                         Text("We are a family owned Mediterranean restaurant, focused on traditional recipes served with a modern twist.")
-                            .font(.callout)
+                            .font(.karla(18, weight: .medium))
                             .foregroundColor(.white)
                             .fixedSize(horizontal: false, vertical: true)
                     }
-                    Spacer()
+                    .layoutPriority(1)
+
+                    Image("restaurantFood")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 130, height: 160)
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
                 }
 
                 HStack {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.gray)
                     TextField("Search menu", text: $searchText)
+                        .font(.karla(16))
                 }
                 .padding(10)
                 .background(Color.white)
@@ -100,15 +100,15 @@ struct Menu: View {
                         selectedCategory = selectedCategory == category ? "" : category
                     } label: {
                         Text(category)
-                            .fontWeight(.semibold)
+                            .font(.karla(16, weight: .bold))
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)
                             .background(
                                 selectedCategory == category
-                                    ? Color(red: 0.29, green: 0.37, blue: 0.35)
-                                    : Color(UIColor.systemGray5)
+                                    ? Color.llGreen
+                                    : Color.llCloud
                             )
-                            .foregroundColor(selectedCategory == category ? .white : .black)
+                            .foregroundColor(selectedCategory == category ? .white : .llDark)
                             .cornerRadius(20)
                     }
                 }
@@ -172,18 +172,16 @@ struct DishRow: View {
         HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 6) {
                 Text(dish.title ?? "")
-                    .font(.headline)
-                    .fontWeight(.bold)
-                    .foregroundColor(.primary)
+                    .font(.karla(18, weight: .bold))
+                    .foregroundColor(.llDark)
                 Text(dish.descriptionText ?? "")
-                    .font(.subheadline)
+                    .font(.karla(16))
                     .foregroundColor(.secondary)
                     .lineLimit(2)
                 Spacer()
                 Text("$\(dish.price ?? "")")
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .foregroundColor(.secondary)
+                    .font(.karla(16, weight: .medium))
+                    .foregroundColor(.llDark)
             }
             Spacer()
             AsyncImage(url: URL(string: dish.image ?? "")) { phase in
@@ -191,11 +189,11 @@ struct DishRow: View {
                 case .success(let image):
                     image.resizable().scaledToFill()
                 case .empty:
-                    Color(UIColor.systemGray5)
+                    Color.llCloud
                 case .failure:
-                    Color(UIColor.systemGray5)
+                    Color.llCloud
                 @unknown default:
-                    Color(UIColor.systemGray5)
+                    Color.llCloud
                 }
             }
             .frame(width: 90, height: 90)

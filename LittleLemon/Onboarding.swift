@@ -1,6 +1,5 @@
 import SwiftUI
 
-// MARK: - User Storage Keys
 let userFirstNameKey = "first name key"
 let userLastNameKey = "last name key"
 let userEmailKey = "email key"
@@ -12,18 +11,16 @@ struct Onboarding: View {
     @State private var firstName = ""
     @State private var lastName = ""
     @State private var email = ""
+    @State private var page = 0
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 0) {
-                header
-                hero
-                form
-            }
+        VStack(spacing: 0) {
+            header
+            hero
+            formArea
+            Spacer()
         }
     }
-
-    // MARK: - Header
 
     private var header: some View {
         HStack {
@@ -35,77 +32,117 @@ struct Onboarding: View {
             Spacer()
         }
         .padding()
-        .background(Color(UIColor.systemBackground))
+        .background(Color(.systemBackground))
     }
-
-    // MARK: - Hero
 
     private var hero: some View {
         ZStack {
-            Color(red: 0.29, green: 0.37, blue: 0.35)
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Little Lemon")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .foregroundColor(Color(red: 1.0, green: 0.80, blue: 0.0))
-                Text("Chicago")
-                    .font(.title2)
-                    .foregroundColor(.white)
-                    .padding(.bottom, 4)
-                Text("We are a family owned Mediterranean restaurant, focused on traditional recipes served with a modern twist.")
-                    .font(.callout)
-                    .foregroundColor(.white)
-                    .fixedSize(horizontal: false, vertical: true)
+            Color.llGreen
+            HStack(alignment: .center, spacing: 12) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Little Lemon")
+                        .font(.markaziText(64, weight: .medium))
+                        .foregroundColor(.llYellow)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Text("Chicago")
+                        .font(.markaziText(40))
+                        .foregroundColor(.white)
+                    Text("We are a family owned Mediterranean restaurant, focused on traditional recipes served with a modern twist.")
+                        .font(.karla(18, weight: .medium))
+                        .foregroundColor(.white)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.top, 4)
+                }
+                .layoutPriority(1)
+
+                Image("restaurantFood")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 130, height: 160)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
             .padding()
         }
     }
 
-    // MARK: - Form
-
-    private var form: some View {
+    private var formArea: some View {
         VStack(alignment: .leading, spacing: 20) {
-            formField(label: "First name *", text: $firstName)
-            formField(label: "Last name *", text: $lastName)
-            formField(label: "Email *", text: $email)
+            stepIndicator
+
+            if page == 0 {
+                fieldBlock(label: "First name *", text: $firstName)
+                actionButton(title: "Next",
+                             enabled: !firstName.trimmingCharacters(in: .whitespaces).isEmpty) {
+                    withAnimation { page = 1 }
+                }
+            } else if page == 1 {
+                fieldBlock(label: "Last name *", text: $lastName)
+                actionButton(title: "Next",
+                             enabled: !lastName.trimmingCharacters(in: .whitespaces).isEmpty) {
+                    withAnimation { page = 2 }
+                }
+            } else {
+                emailBlock
+                actionButton(title: "Create account", enabled: isValidEmail(email)) {
+                    saveAndLogin()
+                }
+            }
+        }
+        .padding()
+        .animation(.easeInOut, value: page)
+    }
+
+    private var stepIndicator: some View {
+        HStack(spacing: 8) {
+            ForEach(0..<3) { i in
+                Circle()
+                    .fill(i == page ? Color.llGreen : Color.llCloud)
+                    .frame(width: 8, height: 8)
+            }
+            Spacer()
+            Text("Step \(page + 1) of 3")
+                .font(.karla(13))
+                .foregroundColor(.secondary)
+        }
+    }
+
+    private func fieldBlock(label: String, text: Binding<String>) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(label)
+                .font(.karla(16, weight: .semibold))
+                .foregroundColor(.secondary)
+            TextField("", text: text)
+                .font(.karla(16))
+                .padding(12)
+                .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.llCloud, lineWidth: 1.5))
+        }
+    }
+
+    private var emailBlock: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Email *")
+                .font(.karla(16, weight: .semibold))
+                .foregroundColor(.secondary)
+            TextField("", text: $email)
                 .keyboardType(.emailAddress)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
+                .font(.karla(16))
+                .padding(12)
+                .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.llCloud, lineWidth: 1.5))
+        }
+    }
 
-            Button("Create account") {
-                saveAndLogin()
-            }
-            .disabled(!isFormValid)
-            .font(.headline)
-            .foregroundColor(isFormValid ? .black : .white)
+    private func actionButton(title: String, enabled: Bool, action: @escaping () -> Void) -> some View {
+        Button(title, action: action)
+            .disabled(!enabled)
+            .font(.karla(18, weight: .bold))
+            .foregroundColor(enabled ? .llDark : .white)
             .frame(maxWidth: .infinity)
             .padding()
-            .background(isFormValid ? Color(red: 1.0, green: 0.80, blue: 0.0) : Color(UIColor.systemGray4))
+            .background(enabled ? Color.llYellow : Color.llCloud)
             .cornerRadius(10)
             .padding(.top, 8)
-        }
-        .padding()
-    }
-
-    private func formField(label: String, text: Binding<String>) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(label)
-                .font(.subheadline)
-                .fontWeight(.semibold)
-                .foregroundColor(.secondary)
-            TextField("", text: text)
-                .padding(12)
-                .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color(UIColor.systemGray4), lineWidth: 1))
-        }
-    }
-
-    // MARK: - Validation & Actions
-
-    private var isFormValid: Bool {
-        !firstName.trimmingCharacters(in: .whitespaces).isEmpty &&
-        !lastName.trimmingCharacters(in: .whitespaces).isEmpty &&
-        isValidEmail(email)
     }
 
     private func isValidEmail(_ email: String) -> Bool {
@@ -116,8 +153,8 @@ struct Onboarding: View {
     private func saveAndLogin() {
         let d = UserDefaults.standard
         d.set(firstName.trimmingCharacters(in: .whitespaces), forKey: userFirstNameKey)
-        d.set(lastName.trimmingCharacters(in: .whitespaces),  forKey: userLastNameKey)
-        d.set(email,                                           forKey: userEmailKey)
+        d.set(lastName.trimmingCharacters(in: .whitespaces), forKey: userLastNameKey)
+        d.set(email, forKey: userEmailKey)
         isLoggedIn = true
     }
 }

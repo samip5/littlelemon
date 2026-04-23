@@ -3,22 +3,22 @@ import SwiftUI
 struct NavigationHeader: View {
     @AppStorage("user_avatar_data") private var avatarData: Data = Data()
 
-    private var avatarImage: UIImage? {
-        avatarData.isEmpty ? nil : UIImage(data: avatarData)
-    }
     var showBackButton: Bool = false
     var onBack: () -> Void = {}
     var avatarAction: () -> Void = {}
 
+    private var avatarImage: UIImage? {
+        avatarData.isEmpty ? nil : UIImage(data: avatarData)
+    }
+
     var body: some View {
         HStack(spacing: 0) {
-            // Back button or empty spacer to keep logo centered
             Group {
                 if showBackButton {
                     Button(action: onBack) {
                         ZStack {
                             Circle()
-                                .fill(Color(red: 0.25, green: 0.32, blue: 0.29))
+                                .fill(Color.llGreen)
                                 .frame(width: 40, height: 40)
                             Image(systemName: "arrow.left")
                                 .foregroundColor(.white)
@@ -39,7 +39,6 @@ struct NavigationHeader: View {
 
             Spacer()
 
-            // Avatar — tappable from menu, decorative on profile
             Button(action: avatarAction) {
                 Group {
                     if let image = avatarImage {
@@ -50,7 +49,7 @@ struct NavigationHeader: View {
                         Image(systemName: "person.circle.fill")
                             .resizable()
                             .scaledToFill()
-                            .foregroundColor(Color(UIColor.systemGray3))
+                            .foregroundColor(.secondary)
                     }
                 }
                 .frame(width: 40, height: 40)
@@ -60,7 +59,7 @@ struct NavigationHeader: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
-        .background(Color(UIColor.systemBackground))
+        .background(Color(.systemBackground))
     }
 }
 

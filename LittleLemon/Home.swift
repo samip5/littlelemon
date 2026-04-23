@@ -5,9 +5,19 @@ struct Home: View {
     @AppStorage(userIsLoggedInKey) private var isLoggedIn = false
     let persistence = PersistenceController.shared
 
+    @State private var selectedTab = 0
+
     var body: some View {
-        Menu(onLogout: handleLogout)
-            .environment(\.managedObjectContext, persistence.container.viewContext)
+        TabView(selection: $selectedTab) {
+            Menu(onLogout: handleLogout, onProfileTap: { selectedTab = 1 })
+                .environment(\.managedObjectContext, persistence.container.viewContext)
+                .tabItem { Label("Menu", systemImage: "fork.knife") }
+                .tag(0)
+
+            UserProfile(onLogout: handleLogout)
+                .tabItem { Label("Profile", systemImage: "person") }
+                .tag(1)
+        }
     }
 
     private func handleLogout() {
